@@ -259,6 +259,14 @@ table.grid{border-collapse:collapse;width:100%;background:var(--grp);border-radi
 .hfilter{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;margin-bottom:10px}
 .nudge{background:var(--grp);border-radius:14px;padding:12px 16px;margin:14px 0 0}.nudge b{display:block}.nudge small{color:var(--mute);font-size:14px}.nudge .acts button{min-height:38px;font-size:15px}
 .imgview{width:100%;max-width:520px;display:grid;gap:10px;justify-items:center}.imgview img{width:100%;border-radius:12px;-webkit-touch-callout:default;-webkit-user-select:auto;box-shadow:0 8px 30px rgba(0,0,0,.25)}.imgview p{color:#fff;margin:0}.imgview .cancel{width:100%;background:var(--cell);min-height:54px;border-radius:14px;font-size:18px;font-weight:600;color:var(--mint)}
+.lock{font-style:normal;font-size:10px;font-weight:800;color:var(--mint);background:var(--mintt);border-radius:5px;padding:1px 5px;margin-left:6px;vertical-align:3px}
+.pw{width:100%;max-width:480px;background:var(--cell);border-radius:22px;padding:22px 20px 14px;display:grid;gap:12px;max-height:88vh;overflow:auto}
+@media(prefers-reduced-motion:no-preference){.pw{animation:up .25s ease-out}}
+.pwhead{display:grid;justify-items:center;text-align:center;gap:4px}.pwhead svg{width:30px;height:42px;color:var(--ink)}.pwhead b{font-size:24px;letter-spacing:-.01em}.pwhead span{color:var(--mute);font-size:15px}
+.pwwhy{margin:0;text-align:center;background:var(--mintt);color:var(--mint);border-radius:10px;padding:8px 12px;font-weight:600;font-size:15px}
+.pwlist{list-style:none;margin:0;padding:0;display:grid;gap:8px}.pwlist li{display:flex;gap:10px;align-items:center;font-size:16px}.pwlist li::before{content:"✓";flex:none;width:22px;height:22px;border-radius:50%;background:var(--mint);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:800}
+.pwbuy{min-height:54px;font-size:18px;width:100%}.pwbuy[disabled]{opacity:.6}
+.pwfoot{display:flex;justify-content:space-between}.pwfoot button{background:none;color:var(--mute);font-size:15px;font-weight:600;padding:0 4px}
 #splash{position:fixed;inset:0;z-index:20;background:var(--bg);display:grid;place-items:center;transition:opacity .35s}
 #splash.out{opacity:0;pointer-events:none}
 #splash .sw{display:grid;justify-items:center;gap:14px}
@@ -348,7 +356,27 @@ const mkS=(v,par)=>{const d=v-par,c=d<=-2?"b2":d===-1?"b1":d===1?"o1":d>=2?"o2":
 const sname=(v,p)=>{const d=v-p;return v===1?"Ace":NAMES[d]||(d>0?"+"+d:String(d))};
 
 const live=r=>({...r,holes:r.holes.map((h,i)=>i===r.cur?{...h,done:true}:h)});
-function shotsFor(r,i){const hc=D.hcp;if(hc==null||hc==="")return null;const hs=r.holes,h=hs[i];if(!h||!h.idx)return null;const n=hs.length,ph=n===9?Math.round(hc/2):+hc;
+const PRO_ID="ie.pocketscorecard.app.pro";let proPrice="€3.99";
+const isPro=()=>!native||!!D.pro;
+function needPro(feat){if(isPro())return false;ui.paywall=feat||"pro";render();return true}
+function initIAP(){try{const C=window.CdvPurchase;if(!C||!native)return;const st=C.store;
+  st.register([{id:PRO_ID,type:C.ProductType.NON_CONSUMABLE,platform:C.Platform.APPLE_APPSTORE}]);
+  st.when().approved(t=>t.verify()).verified(r=>r.finish()).finished(()=>{}).productUpdated(p=>{if(p.id===PRO_ID){if(p.pricing&&p.pricing.price)proPrice=p.pricing.price;if(p.owned&&!D.pro){D.pro=true;save();ui.paywall=null;render()}}});
+  st.initialize([C.Platform.APPLE_APPSTORE]).then(()=>{const p=st.get(PRO_ID);if(p&&p.pricing)proPrice=p.pricing.price;if(st.owned(PRO_ID)&&!D.pro){D.pro=true;save();render()}})}catch(e){}}
+function buyPro(){try{const C=window.CdvPurchase,p=C&&C.store.get(PRO_ID),o=p&&p.getOffer();if(!o){setMsg("The App Store isn't available right now. Try again in a moment.");return}ui.buying=true;render();
+  o.order().then(err=>{ui.buying=false;if(err&&err.code!==C.ErrorCode.PAYMENT_CANCELLED)setMsg("Purchase didn't go through. Nothing was charged.");render()})}catch(e){ui.buying=false;render()}}
+function restorePro(){try{const C=window.CdvPurchase;if(!C){return}C.store.restorePurchases().then(()=>{if(C.store.owned(PRO_ID)){D.pro=true;save();ui.paywall=null;buzz("HEAVY")}else setMsg("No previous Pro purchase found on this Apple ID.");render()})}catch(e){}}
+document.addEventListener("deviceready",initIAP,false);
+function paywallHTML(){
+  const why={partners:"Playing partners are part of Pro.",trends:"Stats over time are part of Pro.",range:"Range plans are part of Pro.",image:"Sharing your card as an image is part of Pro.",hcp:"Handicap and Stableford points are part of Pro.",courses:"The free version saves 2 courses. Pro saves as many as you like."}[ui.paywall]||"";
+  return`<div class="sheetbg" data-act="pwclose"><div class="pw" data-act="noop" role="dialog" aria-label="Pocket Scorecard Pro">
+  <div class="pwhead"><svg viewBox="0 0 40 56" aria-hidden="true"><path d="M8 4v48" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M9 5l24 8-24 9z" fill="#e0283c"/></svg><b>Pocket Scorecard Pro</b><span>Pay once. Yours forever. No ads, no subscription.</span></div>
+  ${why?`<p class="pwwhy">${esc(why)}</p>`:""}
+  <ul class="pwlist"><li>Playing partners on your card</li><li>Handicap, shots received and Stableford points</li><li>Stats over time and your hardest holes</li><li>Range plans built from your rounds</li><li>Share your card as an image</li><li>Unlimited saved courses</li></ul>
+  <button class="primary pwbuy" data-act="buypro"${ui.buying?" disabled":""}>${ui.buying?"Opening App Store…":`Unlock Pro for ${esc(proPrice)}`}</button>
+  <div class="pwfoot"><button data-act="restorepro">Restore purchase</button><button data-act="pwclose">Not now</button></div>
+  <p class="msg" id="msg">${esc(ui.msg||"")}</p></div></div>`}
+function shotsFor(r,i){if(!isPro())return null;const hc=D.hcp;if(hc==null||hc==="")return null;const hs=r.holes,h=hs[i];if(!h||!h.idx)return null;const n=hs.length,ph=n===9?Math.round(hc/2):+hc;
   const rank=hs.filter(x=>x.idx&&x.idx<h.idx).length+1;return Math.floor(ph/n)+(rank<=ph%n?1:0)}
 const ptsFor=(r,i)=>{const sh=shotsFor(r,i),h=r.holes[i];return sh==null?null:Math.max(0,h.par+sh+2-h.strokes)};
 const dots=n=>n>0?`<i class="sdot">${"•".repeat(Math.min(n,3))}</i>`:"";
@@ -370,7 +398,7 @@ function club(y){
 }
 function startRound(kind,id){
   let holes,mode,name,cid=null;
-  const party=(D.party||[]).slice(0,3),np=party.length;
+  const party=isPro()?(D.party||[]).slice(0,3):[],np=party.length;
   if(kind==="course"){const c=D.courses.find(x=>x.id===id);if(!c)return;mode=c.mode;name=c.name;cid=c.id;holes=c.holes.map(h=>newHole(h.par,h.yds,h.idx,np));D.lastCourse=c.id}
   else{const [m,n]=kind.split("-");mode=m;const k=+n;holes=(m==="pp"?Array(k).fill(3):GOLF18.slice(0,k)).map(p=>newHole(p,null,null,np));
     name=(($("qName")||{}).value||"").trim()||(m==="pp"?"Pitch & putt ":"Golf ")+k}
@@ -502,7 +530,7 @@ function vStart(){
   const party=D.party||[];
   const tips=D.seen?"":`<div class="welcome"><b>Welcome to Pocket Scorecard</b><ul><li><b>One tap per hole.</b> Par and 2 putts are filled in; use −1 / +1 if not, then Next hole.</li><li><b>Tip me</b> when the round goes sideways: what it's seen, and one thing to try.</li><li><b>Add your course</b> from a photo of its scorecard, and set your clubs in Settings for club tips.</li></ul><button class="primary" data-act="seen">Got it</button></div>`;
   const s10=`<button class="s10" data-act="s10" aria-pressed="${!!ui.s10}">Start on 10</button>`;
-  const partyRow=`<div class="party"><span class="muted">Playing with</span>${party.map((p,i)=>`<span class="pchip">${esc(p)}<button data-act="rmp" data-i="${i}" aria-label="Remove ${esc(p)}">×</button></span>`).join("")}${party.length<3?(ui.adding?`<input id="pName" maxlength="14" placeholder="Name" aria-label="Player name"><button data-act="addp">Add</button>`:`<button class="addp" data-act="showadd">+ Add player</button>`):""}</div>`;
+  const partyRow=`<div class="party"><span class="muted">Playing with</span>${party.map((p,i)=>`<span class="pchip">${esc(p)}<button data-act="rmp" data-i="${i}" aria-label="Remove ${esc(p)}">×</button></span>`).join("")}${party.length<3?(ui.adding?`<input id="pName" maxlength="14" placeholder="Name" aria-label="Player name"><button data-act="addp">Add</button>`:`<button class="addp" data-act="showadd">+ Add player${isPro()?"":`<i class="lock">PRO</i>`}</button>`):""}</div>`;
   return`<section class="band"><div class="wrap home">
   ${tips}<div class="mapcard" id="mapc"><div class="mapsvg" id="msvg">${holeSVG(mapI)}</div><div class="mapcap${capSide(mapI)}" id="mcap"><b id="mcapb">${esc(capMsgs()[capI%capMsgs().length])}</b><span id="mcaps">${HOLES[mapI%HOLES.length].n}</span></div></div>${hero}${hc&&hc.holes.length===18?`<div class="heroopt">${s10}</div>`:""}
   ${partyRow}
@@ -511,7 +539,7 @@ function vStart(){
   <div class="tiles t3">
     <button class="tile" data-act="pick" data-v="golf" aria-pressed="${ui.pick==="golf"}"><b>Golf</b><span>Full course<small>Par 72</small></span></button>
     <button class="tile" data-act="pick" data-v="pp" aria-pressed="${ui.pick==="pp"}"><b>P&amp;P</b><span>Pitch & putt<small>Par 54</small></span></button>
-    <button class="tile" data-act="range"><b>Range</b><span>Practice<small>From your rounds</small></span></button>
+    <button class="tile" data-act="range"><b>Range${isPro()?"":`<i class="lock">PRO</i>`}</b><span>Practice<small>From your rounds</small></span></button>
   </div>
   ${ui.pick?`<div class="pickrow"><input id="qName" placeholder="Where are you playing? (optional)" aria-label="Where are you playing (optional)">
     <button class="primary go18" data-act="start" data-kind="${ui.pick}-18">Start 18 holes</button>
@@ -614,6 +642,7 @@ function vSummary(){
   <p class="msg" id="msg">${esc(ui.msg||"")}</p></div></section>`;
 }
 function trends(){
+  if(!isPro())return`<div class="nudge"><b>Stats over time</b><small>Your average per 18, putting trends, last 10 rounds and hardest holes, with Pro.</small><div class="acts" style="margin-top:8px"><button class="primary" data-act="gopro">See Pro</button></div></div>`;
   const rs=D.rounds.filter(r=>!r.legacy).map(r=>({r,s:stats(r)})).filter(x=>x.s.played===x.s.n).sort((a,b)=>a.r.date.localeCompare(b.r.date)||String(a.r.id).localeCompare(String(b.r.id)));
   if(rs.length<2)return'<p class="muted">Trends appear here after two full rounds.</p>';
   const avg=a=>a.reduce((t,x)=>t+x,0)/a.length,p18=x=>(x.s.score-x.s.par)/x.s.n*18;
@@ -682,9 +711,11 @@ function vData(){
   <div class="chips">${[["0","Standard"],["1","Large"]].map(([k,l])=>`<button data-act="big" data-v="${k}" aria-pressed="${!!D.big===(k==="1")}">${l}</button>`).join("")}</div>
   <h3>Distances</h3>
   <div class="chips">${[["yd","Yards"],["m","Metres"]].map(([k,l])=>`<button data-act="units" data-v="${k}" aria-pressed="${(D.units||"yd")===k}">${l}</button>`).join("")}</div>
+  <h3>Pocket Scorecard Pro</h3>
+  ${isPro()?`<p class="muted" style="margin-top:0">${native?"Pro is unlocked. Thank you for supporting a small independent app.":"Tester preview: everything is unlocked."}</p>`:`<div class="nudge" style="margin-top:0"><b>Free version</b><small>Unlock partners, Stableford points, trends, range plans, image sharing and unlimited courses. Pay once, no subscription.</small><div class="acts" style="margin-top:8px"><button class="primary" data-act="gopro">Unlock Pro</button><button data-act="restorepro">Restore purchase</button></div></div>`}
   <h3>My handicap</h3>
   <p class="muted" style="margin-top:0">Your playing handicap for the course. Used with each hole's stroke index (S.I.) to show the holes you get shots on and your Stableford points. Leave blank if you don't have one.</p>
-  <input id="hcpIn" type="number" inputmode="numeric" min="0" max="54" value="${D.hcp??""}" placeholder="e.g. 18" aria-label="Playing handicap" style="max-width:140px">
+  ${isPro()?"":`<p class="muted"><b>Pro feature.</b> <button class="addp" data-act="gopro" style="min-height:30px;padding:0">Unlock</button></p>`}<input id="hcpIn"${isPro()?"":" disabled"} type="number" inputmode="numeric" min="0" max="54" value="${D.hcp??""}" placeholder="e.g. 18" aria-label="Playing handicap" style="max-width:140px">
   <h3 id="clubs">My clubs</h3>
   <p class="muted" style="margin-top:0">How far you carry each club with a normal full swing, in ${isM()?"metres":"yards"}. Leave blank for clubs you don't carry. Used for club suggestions and range plans.</p>
   <div class="acts" style="margin:0 0 10px"><span class="muted">Quick fill:</span><div class="chips">${[["beg","Beginner"],["avg","Average"],["low","Low handicap"]].map(([k,l])=>`<button data-act="ctpl" data-v="${k}">${l}</button>`).join("")}</div></div>
@@ -715,7 +746,8 @@ function render(){
   const menu=ui.menu&&D.active?`<div class="sheetbg" data-act="menuclose"><div class="asheet" data-act="noop"><div class="grp"><p>${esc(D.active.courseName)}</p>${ui.menu==="discard"?`<button class="danger" data-act="discard">Discard this round</button>`:`<button data-act="finish">Finish round now</button><button class="danger" data-act="menudisc">Discard round…</button>`}</div><button class="cancel" data-act="menuclose">Cancel</button></div></div>`:"";
   const app=$("app"),changed=view!==lastView;
   const imgv=ui.img?`<div class="sheetbg" data-act="imgclose"><div class="imgview" data-act="noop"><img src="${ui.img}" alt="Scorecard image"><p class="muted">Press and hold the image to save or share it.</p><button class="cancel" data-act="imgclose">Done</button></div></div>`:"";
-  $("app").innerHTML=toastHTML()+imgv+menu+({start:vStart,range:vRange,play:vPlay,summary:vSummary,history:vHistory,courses:vCourses,edit:vEdit,data:vData}[view])();
+  const pw=ui.paywall?paywallHTML():"";
+  $("app").innerHTML=toastHTML()+imgv+menu+pw+({start:vStart,range:vRange,play:vPlay,summary:vSummary,history:vHistory,courses:vCourses,edit:vEdit,data:vData}[view])();
   if(changed){lastView=view;app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");setTimeout(()=>app.classList.remove("enter"),700);countUp()}
 }
 function setPhoto(src){const im=new Image();im.onload=()=>{const sc=Math.min(1,1100/Math.max(im.width,im.height)),c=document.createElement("canvas");
@@ -789,9 +821,13 @@ document.addEventListener("click",e=>{
     case"ppar":buzz();h.ps[+b.dataset.p]=h.par;save();break;
     case"s10":ui.s10=!ui.s10;break;
     case"addp":{const i=$("pName"),v=(i&&i.value||"").trim().slice(0,14);if(v&&(D.party||[]).length<3){D.party=[...(D.party||[]),v];save()}ui.adding=!v;break}
-    case"showadd":ui.adding=true;render();setTimeout(()=>{const i=$("pName");i&&i.focus()},0);return;
+    case"showadd":if(needPro("partners"))return;ui.adding=true;render();setTimeout(()=>{const i=$("pName");i&&i.focus()},0);return;
     case"rmp":D.party=(D.party||[]).filter((_,i)=>i!==+b.dataset.i);save();break;
     case"seen":D.seen=true;save();break;
+    case"pwclose":ui.paywall=null;ui.msg="";break;
+    case"buypro":buyPro();return;
+    case"restorepro":restorePro();return;
+    case"gopro":ui.paywall="pro";break;
     case"units":D.units=b.dataset.v;save();break;
     case"big":D.big=b.dataset.v==="1";save();break;
     case"goclubs":ui={};view="data";render();setTimeout(()=>{const c=$("clubs");c&&c.scrollIntoView()},0);return;
@@ -804,7 +840,7 @@ document.addEventListener("click",e=>{
     case"fwd":r.cur=nextI(r);ui.tip=null;save();break;
     case"tip":tipMe();break;
     case"pick":ui.pick=ui.pick===b.dataset.v?null:b.dataset.v;break;
-    case"range":ui={};view="range";break;
+    case"range":if(needPro("range"))return;ui={};view="range";break;
     case"balls":ui.balls=+b.dataset.v;ui.custom=false;ui.rd={};break;
     case"bcustom":ui.custom=true;break;
     case"rdone":ui.rd[b.dataset.v]=!ui.rd[b.dataset.v];break;
@@ -817,7 +853,7 @@ document.addEventListener("click",e=>{
     case"ctpl":snap("Clubs filled in");D.clubs=CTPL[b.dataset.v].map(c=>[...c]);save();break;
     case"dojsonnow":D.lastBackup=Date.now();save();if(native)dl("pocket-scorecard-backup.json",JSON.stringify(D),"application/json");else{ui={};view="data";render();setTimeout(()=>{const c=document.querySelector('[data-act="dljson"]');c&&c.scrollIntoView({block:"center"})},0);return}break;
     case"snooze":D.backupSnooze=Date.now()+7*864e5;save();break;
-    case"shareimg":shareImage();return;
+    case"shareimg":if(needPro("image"))return;shareImage();return;
     case"imgclose":ui.img=null;break;
     case"hmode":ui.hm=b.dataset.v;render();filterHist();return;
     case"undo":{const u=ui.undo;if(!u)return;D=JSON.parse(u.d);view=u.view;ui={};clearTimeout(undoT);save();buzz();break}
@@ -829,7 +865,7 @@ document.addEventListener("click",e=>{
     case"delround":snap("Round deleted");D.rounds=D.rounds.filter(x=>"del:"+x.id!==ui.confirm);ui.confirm=null;save();break;
     case"view":ui={viewRound:b.dataset.id};view="summary";break;
     case"copysum":{const t=sumText(D.rounds.find(x=>x.id===ui.viewRound));if(Share){Share.share({text:t}).catch(()=>{})}else copy(t,"Summary");return}
-    case"newc":ui={edit:{id:uid("c"),name:"",mode:"pp",photo:null,holes:Array.from({length:18},()=>({par:null,yds:null,idx:null}))}};view="edit";break;
+    case"newc":if(D.courses.length>=2&&needPro("courses"))return;ui={edit:{id:uid("c"),name:"",mode:"pp",photo:null,holes:Array.from({length:18},()=>({par:null,yds:null,idx:null}))}};view="edit";break;
     case"editc":{const c=JSON.parse(JSON.stringify(D.courses.find(x=>x.id===b.dataset.id)));c.holes.forEach(h=>{if(h.pa)h.par=null;delete h.pa});ui={edit:c}}view="edit";break;
     case"cmode":ui.edit.mode=b.dataset.v;break;
     case"choles":{const n=+b.dataset.v,hs=ui.edit.holes;ui.edit.holes=n<hs.length?hs.slice(0,n):hs.concat(Array.from({length:n-hs.length},()=>({par:null,yds:null,idx:null})));break}

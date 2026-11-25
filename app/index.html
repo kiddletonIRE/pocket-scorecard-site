@@ -243,10 +243,16 @@ table.grid{border-collapse:collapse;width:100%;background:var(--grp);border-radi
 .mapsvg,#mcapb{transition:opacity .3s ease}.mapsvg.fade,#mcapb.fade{opacity:0}
 #app.enter .home>*,#app.enter .wrap>section,#app.enter .wrap>.list,#app.enter .wrap>.stats{animation:rise .38s cubic-bezier(.2,.8,.2,1) both}
 #app.enter .home>*:nth-child(2){animation-delay:.04s}#app.enter .home>*:nth-child(3){animation-delay:.08s}#app.enter .home>*:nth-child(4){animation-delay:.12s}#app.enter .home>*:nth-child(5){animation-delay:.16s}#app.enter .home>*:nth-child(n+6){animation-delay:.2s}
+.hback{display:flex;align-items:center;gap:2px;background:none;border:0;padding:0 0 2px;margin:0 0 0 -4px;min-height:0;color:var(--mint);font-size:17px;font-weight:400;line-height:1.2;font-family:inherit}.hback[hidden]{display:none}.hback span{font-size:28px;line-height:.8;font-weight:300;margin-top:-3px}.hback i{font-style:normal}.top.compact .hback{display:none}
+#app.push>*{animation:pushin .34s cubic-bezier(.2,.8,.2,1) both}#app.pop>*{animation:popin .3s cubic-bezier(.2,.8,.2,1) both}
+@keyframes pushin{from{opacity:.4;transform:translateX(28%)}to{opacity:1;transform:none}}@keyframes popin{from{opacity:.4;transform:translateX(-18%)}to{opacity:1;transform:none}}
+#app.drag{transition:none}#app.settle{transition:transform .22s cubic-bezier(.2,.8,.2,1),opacity .22s}
+.edgeshade{position:fixed;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.08),transparent 30%);opacity:0;z-index:3}
+[data-act]:not(button):active,summary:active,label:active{opacity:.6}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .mk.pulse{animation:pulse .5s cubic-bezier(.2,.8,.2,1)}@keyframes pulse{0%{transform:scale(.6)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
 .tile,.crow button,.ritem,.hgo,.sc3 button,.go{transition:transform .12s}.tile:active,.crow button:active,.hgo:active,.sc3 button:active,.go:active{transform:scale(.97)}
-@media(prefers-reduced-motion:reduce){#app.enter *{animation:none!important}.mk.pulse{animation:none}.mapsvg,#mcapb{transition:none}}
+@media(prefers-reduced-motion:reduce){#app.enter *,#app.push>*,#app.pop>*{animation:none!important}.mk.pulse{animation:none}.mapsvg,#mcapb{transition:none}}
 .sdot{font-style:normal;color:var(--mint);font-size:10px;letter-spacing:-1px;margin-left:1px;vertical-align:4px}
 .nine tr.si td{font-size:12px;color:var(--mute)}.nine tr.pts td{color:var(--mint);font-weight:700}
 .cfoot{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--cell);border-top:.5px solid var(--sep)}.cfoot div{padding:8px 10px;border-right:.5px solid var(--sep);display:grid}.cfoot div:last-child{border-right:0}
@@ -290,7 +296,7 @@ table.grid{border-collapse:collapse;width:100%;background:var(--grp);border-radi
 <script>try{if(localStorage.getItem("gs_intro"))document.getElementById("splash").remove();else localStorage.setItem("gs_intro","1")}catch(e){}</script>
 <header class="top">
   <div class="bar">
-    <div class="brand"><svg class="fl big" viewBox="0 0 12 16" aria-hidden="true"><path d="M2 1v14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M2.8 1.5l8 2.6-8 2.8z" fill="#c8102e"/></svg><div><div class="cname" id="hName">Pocket Scorecard</div><div class="csub" id="hSub"></div></div></div>
+    <div class="brand"><svg class="fl big" viewBox="0 0 12 16" aria-hidden="true"><path d="M2 1v14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M2.8 1.5l8 2.6-8 2.8z" fill="#c8102e"/></svg><div><button class="hback" id="hBack" data-act="back" hidden><span aria-hidden="true">‹</span> <i id="hBackL">Back</i></button><div class="cname" id="hName">Pocket Scorecard</div><div class="csub" id="hSub"></div></div></div>
     <div class="score" id="hScore"></div>
   </div>
 </header>
@@ -732,7 +738,10 @@ function vData(){
   <textarea id="out" rows="6" readonly aria-label="Exported data" style="display:${ui.out?"block":"none"};margin-top:10px">${esc(ui.out||"")}</textarea>
   </div></section>`;
 }
-let lastView=null;
+let lastView=null,backTo=null,navDir=null;
+const DETAIL={summary:"history",edit:"courses",range:"start"},BACKL={start:"Home",history:"History",courses:"Courses",data:"Settings",play:"Round"};
+function backTarget(){const t=backTo&&!DETAIL[backTo]?backTo:DETAIL[view];return t==="play"&&!D.active?"start":t}
+function goBack(){if(!DETAIL[view])return;const t=backTarget();ui={};navDir="pop";view=t;buzz();render();window.scrollTo(0,0)}
 function countUp(){if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;document.querySelectorAll("[data-count]").forEach(el=>{const v=+el.dataset.count;if(!(v>0))return;const t0=performance.now(),d=550;const f=t=>{const k=Math.min(1,(t-t0)/d),e=1-Math.pow(1-k,3);el.textContent=Math.round(v*e);if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)})}
 function render(){
   document.documentElement.dataset.pal="mint";if(D.big)document.documentElement.dataset.big="1";else delete document.documentElement.dataset.big;document.documentElement.dataset.mode=D.mode||"light";
@@ -745,10 +754,12 @@ function render(){
   else{$("hName").textContent={history:"History",courses:"Courses",edit:"Course",data:"Settings",range:"Range plan",summary:"Round"}[view]||"Pocket Scorecard";$("hSub").textContent="";$("hScore").innerHTML=""}
   const menu=ui.menu&&D.active?`<div class="sheetbg" data-act="menuclose"><div class="asheet" data-act="noop"><div class="grp"><p>${esc(D.active.courseName)}</p>${ui.menu==="discard"?`<button class="danger" data-act="discard">Discard this round</button>`:`<button data-act="finish">Finish round now</button><button class="danger" data-act="menudisc">Discard round…</button>`}</div><button class="cancel" data-act="menuclose">Cancel</button></div></div>`:"";
   const app=$("app"),changed=view!==lastView;
+  if(changed&&DETAIL[view]&&!DETAIL[lastView]&&navDir!=="pop"){backTo=lastView;navDir=navDir||"push"}
+  {const hb=$("hBack");if(hb){const det=!!DETAIL[view];hb.hidden=!det;if(det){const t=backTarget();$("hBackL").textContent=BACKL[t]||"Back"}}}
   const imgv=ui.img?`<div class="sheetbg" data-act="imgclose"><div class="imgview" data-act="noop"><img src="${ui.img}" alt="Scorecard image"><p class="muted">Press and hold the image to save or share it.</p><button class="cancel" data-act="imgclose">Done</button></div></div>`:"";
   const pw=ui.paywall?paywallHTML():"";
   $("app").innerHTML=toastHTML()+imgv+menu+pw+({start:vStart,range:vRange,play:vPlay,summary:vSummary,history:vHistory,courses:vCourses,edit:vEdit,data:vData}[view])();
-  if(changed){lastView=view;app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");setTimeout(()=>app.classList.remove("enter"),700);countUp()}
+  if(changed){lastView=view;const cls=navDir==="push"&&DETAIL[view]?"push":navDir==="pop"?"pop":"enter";navDir=null;app.classList.remove("enter","push","pop");void app.offsetWidth;app.classList.add(cls);setTimeout(()=>app.classList.remove(cls),700);if(cls==="enter")countUp();if(cls!=="enter")window.scrollTo(0,0)}else navDir=null
 }
 function setPhoto(src){const im=new Image();im.onload=()=>{const sc=Math.min(1,1100/Math.max(im.width,im.height)),c=document.createElement("canvas");
     c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext("2d").drawImage(im,0,0,c.width,c.height);ui.edit.photo=c.toDataURL("image/jpeg",0.6);render()};im.src=src}
@@ -804,10 +815,11 @@ function restore(text){
 
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-act],[data-tab],[data-go]");if(!b)return;
-  if(b.dataset.tab){ui={};view=b.dataset.tab==="play"?(D.active?"play":"start"):b.dataset.tab;render();window.scrollTo(0,0);return}
+  if(b.dataset.tab){ui={};backTo=null;navDir="tab";view=b.dataset.tab==="play"?(D.active?"play":"start"):b.dataset.tab;render();window.scrollTo(0,0);return}
   const a=b.dataset.act,r=D.active,h=r&&r.holes[r.cur];
   if(b.dataset.go!=null){r.cur=+b.dataset.go;ui.tip=null;save();render();return}
   switch(a){
+    case"back":goBack();return;
     case"start":startRound(b.dataset.kind,b.dataset.id);break;
     case"set":{buzz();const k=b.dataset.k,v=b.dataset.v;
       if(k==="par"){const o=h.par;h.par=+v;if(!h.done&&h.strokes===o)h.strokes=h.par;if(h.par<4)h.fw="";else if(!h.fw&&!h.done)h.fw="hit"}
@@ -906,7 +918,15 @@ document.addEventListener("change",e=>{
   if(t.id==="photoIn"){const fr=new FileReader();fr.onload=()=>setPhoto(fr.result);fr.readAsDataURL(f)}
   if(t.id==="restoreIn"){f.text().then(x=>{ui.pasted=x;ui.confirm="restore";render();setMsg("Backup loaded. Confirm to restore.")})}
 });
-let sx=null,sy=null;
+let sx=null,sy=null,ex=null,ey=null,eOn=false;
+document.addEventListener("touchstart",e=>{const t=e.touches[0];ex=null;if(DETAIL[view]&&t.clientX<28&&!document.querySelector(".sheetbg")){ex=t.clientX;ey=t.clientY;eOn=false}},{passive:true});
+document.addEventListener("touchmove",e=>{if(ex==null)return;const t=e.touches[0],dx=t.clientX-ex,dy=t.clientY-ey;
+  if(!eOn){if(Math.abs(dy)>12&&Math.abs(dy)>dx){ex=null;return}if(dx>10){eOn=true;$("app").classList.add("drag")}else return}
+  const a=$("app"),w=innerWidth,d=Math.max(0,dx);a.style.transform=`translateX(${d}px)`;a.style.opacity=String(1-d/w*.35)},{passive:true});
+document.addEventListener("touchend",e=>{if(ex==null)return;const a=$("app"),dx=e.changedTouches[0].clientX-ex,was=eOn;ex=null;eOn=false;if(!was)return;
+  a.classList.remove("drag");a.classList.add("settle");
+  if(dx>Math.min(110,innerWidth*.3)){a.style.transform=`translateX(${innerWidth}px)`;a.style.opacity="0";setTimeout(()=>{a.classList.remove("settle");a.style.transform="";a.style.opacity="";goBack()},200)}
+  else{a.style.transform="";a.style.opacity="";setTimeout(()=>a.classList.remove("settle"),240)}},{passive:true});
 document.addEventListener("touchstart",e=>{if(e.target.closest("#holeCard")){sx=e.touches[0].clientX;sy=e.touches[0].clientY}else sx=null},{passive:true});
 document.addEventListener("touchend",e=>{if(sx==null||!D.active)return;const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;sx=null;
   if(Math.abs(dx)>70&&Math.abs(dy)<50){const r=D.active;r.cur=Math.max(0,Math.min(r.holes.length-1,r.cur+(dx<0?1:-1)));ui.tip=null;save();render()}},{passive:true});

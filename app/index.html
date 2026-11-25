@@ -178,10 +178,11 @@ table.nine{min-width:0;table-layout:fixed}
 
 /* home */
 .home{max-width:560px}
-.season{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--grp);border-radius:16px;padding:14px 6px;text-align:center}.season b{display:block;font-size:24px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}.season b.mint{color:var(--mint)}.season b.red{color:var(--red)}.season small{font-size:12px;color:var(--mute)}.season>div+div{border-left:1px solid var(--sep)}
+.rowh{display:flex;justify-content:space-between;align-items:baseline}.seeall{background:none;color:var(--mint);font-size:16px;font-weight:400;min-height:0;padding:0}
+.season{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--grp);border-radius:16px;padding:8px 6px 10px;text-align:center;margin-top:14px}.season em{grid-column:1/-1;font-style:normal;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--mute);text-align:left;padding:0 10px 6px}.season b{display:block;font-size:22px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}.season b.mint{color:var(--mint)}.season b.red{color:var(--red)}.season small{font-size:12px;color:var(--mute)}.season>div+div{border-left:1px solid var(--sep)}
 .seasonnote{margin:6px 2px 0;font-size:13px}
-.ghost{margin-top:18px;border:1.5px dashed var(--sep);border-radius:16px;padding:14px;text-align:center}.ghost p{margin:12px 0 0;font-size:15px;color:var(--mute)}.ghost p b{color:var(--ink)}
-.gcard{opacity:.55}.grow1{display:grid;grid-template-columns:54px repeat(9,1fr);border-bottom:1px solid var(--sep)}.grow1:last-child{border-bottom:0}.grow1 span{font-size:11px;text-align:left;padding:5px 0;color:var(--mute)}.grow1 i{font-style:normal;font-size:12px;border-left:1px solid var(--sep);padding:5px 0;min-height:16px;color:var(--mute)}
+.ghost{margin-top:12px;border:1.5px dashed var(--sep);border-radius:16px;padding:10px 12px;text-align:center}.ghost p{margin:8px 0 0;font-size:14px;color:var(--mute)}.ghost p b{color:var(--ink)}
+.gcard{opacity:.55}.grow1{display:grid;grid-template-columns:54px repeat(9,1fr);border-bottom:1px solid var(--sep)}.grow1:last-child{border-bottom:0}.grow1 span{font-size:11px;text-align:left;padding:3px 0;color:var(--mute)}.grow1 i{font-style:normal;font-size:11px;border-left:1px solid var(--sep);padding:3px 0;min-height:14px;color:var(--mute)}
 .welcome{background:var(--mintt);padding:14px 16px;margin-bottom:16px}.welcome ul{margin:8px 0 12px;padding-left:18px}.welcome li{margin-bottom:6px;font-size:15px}
 .hero{position:relative;background:linear-gradient(160deg,var(--mint),color-mix(in srgb,var(--mint) 70%,#0b3d2c));color:#fff;border-radius:20px;padding:18px 18px 16px;box-shadow:0 8px 24px -12px color-mix(in srgb,var(--mint) 70%,transparent)}
 .hero .flag{position:absolute;right:18px;top:16px;width:28px;height:40px;color:#fff;opacity:.9}
@@ -192,8 +193,12 @@ table.nine{min-width:0;table-layout:fixed}
 .hnums b{display:block;font-size:26px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}.hnums small{font-size:12px;opacity:.85}
 .hgo{width:100%;min-height:50px;border-radius:12px;background:#fff;color:var(--mint);font-weight:700}
 .heroopt{display:flex;justify-content:flex-end;margin-top:8px}
+.hero.hc{padding:14px 14px 12px 16px;margin-top:0}.hctop{display:flex;align-items:center;gap:12px}.hctop .grow{flex:1;min-width:0}.hc small{font-size:12px;opacity:.85}.hc .hname{font-size:22px;margin:1px 0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hc .hmeta{font-size:13px}
+.hc .hgo{width:auto;min-height:44px;padding:0 22px;border-radius:999px;flex:none}
+.hline{display:flex;align-items:center;gap:14px;margin-top:10px;padding-top:9px;border-top:1px solid rgba(255,255,255,.3);font-size:14px}.hline span{opacity:.9}.hline b{font-size:17px;font-variant-numeric:tabular-nums;opacity:1}
+.hs10{margin-left:auto;min-height:30px;font-size:13px;padding:0 12px;background:rgba(255,255,255,.18);color:#fff}.hs10[aria-pressed=true]{background:#fff;color:var(--mint)}
 .s10{min-height:34px;font-size:15px;border-radius:999px;padding:0 14px}.s10[aria-pressed=true]{background:var(--mint);color:#fff}
-.party{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:16px 0 4px}.party>.muted{font-size:15px}
+.party{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0 0}.party>.muted{font-size:15px}
 .party input{width:130px;min-height:36px;padding:6px 12px}.party>button{min-height:36px;font-size:15px}
 .pchip{display:inline-flex;align-items:center;gap:0;background:var(--mintt);color:var(--mint);border-radius:999px;padding:0 0 0 12px;font-weight:600;font-size:15px}
 .pchip button{background:none;min-height:34px;width:32px;padding:0;font-size:17px;color:var(--mint)}
@@ -206,7 +211,7 @@ table.nine{min-width:0;table-layout:fixed}
 .tile[aria-pressed=true]{background:var(--mint);color:#fff}.tile[aria-pressed=true] small{color:rgba(255,255,255,.85)}
 .pickrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;margin-top:12px}.pickrow input{grid-column:1/-1}
 .go18{min-height:50px}.go9{min-height:50px}.pickrow .s10{grid-column:1/-1;justify-self:start}
-.addc{width:100%;margin-top:10px;background:none;color:var(--mint);font-weight:600}
+.addc{width:100%;margin-top:2px;background:none;color:var(--mint);font-weight:600}
 
 /* range */
 .blk{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;background:var(--grp);border-radius:14px;margin-top:10px}
@@ -233,8 +238,8 @@ table.grid{border-collapse:collapse;width:100%;background:var(--grp);border-radi
 .clubs label{display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:.5px solid var(--sep);padding:6px 0;font-weight:500}
 .clubs input{width:76px;min-height:36px;text-align:right;background:var(--cell);padding:4px 10px}
 
-.mapcard{position:relative;border-radius:20px;overflow:hidden;margin-bottom:14px;box-shadow:0 0 0 .5px var(--sep)}
-.holemap{display:block;width:100%;height:auto}
+.holemap{display:block;width:100%;height:clamp(112px,15.5vh,150px)}.mapcard{position:relative;border-radius:20px;overflow:hidden;margin-bottom:14px;box-shadow:0 0 0 .5px var(--sep)}
+
 .mapcap.right{left:auto;right:12px;text-align:right}.mapcap{position:absolute;left:12px;top:10px;background:color-mix(in srgb,#fff 88%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:12px;padding:6px 12px;display:grid;line-height:1.25;color:#111}
 .mapcap b{font-size:15px}.mapcap span{font-size:13px;color:#5b6b63}
 .flagw{transform-origin:297px 17px;animation:wave 2.4s ease-in-out infinite}
@@ -267,7 +272,7 @@ table.grid{border-collapse:collapse;width:100%;background:var(--grp);border-radi
 @media(prefers-reduced-motion:no-preference){.toast{animation:tin .25s cubic-bezier(.2,.8,.2,1)}@keyframes tin{from{opacity:0;transform:translate(-50%,10px)}}}
 #rnote{min-height:80px;resize:vertical}
 .hfilter{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;margin-bottom:10px}
-.nudge{background:var(--grp);border-radius:14px;padding:12px 16px;margin:14px 0 0}.nudge b{display:block}.nudge small{color:var(--mute);font-size:14px}.nudge .acts button{min-height:38px;font-size:15px}
+.nudge{display:flex;align-items:center;gap:8px;background:var(--grp);border-radius:14px;padding:10px 12px 10px 16px;margin:12px 0 0}.nudge .grow{flex:1;min-width:0}.nudge b{display:block;font-size:15px}.nudge small{color:var(--mute);font-size:13px}.nudge button{min-height:34px;font-size:14px;padding:0 12px}.nudge .nlater{background:none;color:var(--mute);padding:0 4px}.nudge .acts button{min-height:38px;font-size:15px}
 .imgview{width:100%;max-width:520px;display:grid;gap:10px;justify-items:center}.imgview img{width:100%;border-radius:12px;-webkit-touch-callout:default;-webkit-user-select:auto;box-shadow:0 8px 30px rgba(0,0,0,.25)}.imgview p{color:#fff;margin:0}.imgview .cancel{width:100%;background:var(--cell);min-height:54px;border-radius:14px;font-size:18px;font-weight:600;color:var(--mint)}
 .lock{font-style:normal;font-size:10px;font-weight:800;color:var(--mint);background:var(--mintt);border-radius:5px;padding:1px 5px;margin-left:6px;vertical-align:3px}
 .pw{width:100%;max-width:480px;background:var(--cell);border-radius:22px;padding:22px 20px 14px;display:grid;gap:12px;max-height:88vh;overflow:auto}
@@ -291,7 +296,8 @@ table.grid{border-collapse:collapse;width:100%;background:var(--grp);border-radi
 @keyframes roll{0%{transform:translateX(-64px);opacity:0}12%{opacity:1}78%{transform:translateX(0) scale(1);opacity:1}100%{transform:translateX(0) scale(.35);opacity:0}}
 @keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){#splash{display:none}.flagw,.shot{animation:none;stroke-dashoffset:0}}
-@media(max-width:600px){.stats,.clubs{grid-template-columns:minmax(0,1fr)}.tiles{gap:8px}.tile{padding:10px 12px;min-height:92px}}
+@media(max-height:700px){.ghost{display:none}.holemap{height:104px}}
+@media(max-width:600px){.stats,.clubs{grid-template-columns:minmax(0,1fr)}.tiles{gap:8px}.tile{padding:10px 12px;min-height:76px}}
 @media(prefers-reduced-motion:reduce){.extras summary::after{transition:none}}
 </style>
 </head>
@@ -489,7 +495,7 @@ function holeSVG(k){
   const near=(x,y)=>{const dx=gx-tx,dy=gy-ty,L=dx*dx+dy*dy,q=Math.max(0,Math.min(1,((x-tx)*dx+(y-ty)*dy)/L)),px=tx+q*dx,py=ty+q*dy;return Math.hypot(x-px,y-py)<(h.c?52:34)||Math.hypot(x-gx,y-gy)<grx+18};
   let trees="";for(let i=0,n=h.tr||12;i<n*4&&trees.split("<circle").length<=n;i++){const x=R()*360,y=R()*150;if(near(x,y))continue;const r=6+R()*10;trees+=`<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r.toFixed(0)}" style="fill:var(--${R()>.5?"m1":"m2"})"/>`}
   const mx=(tx+gx)/2,my=Math.min(ty,gy)-40,shot=`M${tx} ${ty}Q${mx} ${my} ${gx-4} ${gy}`;
-  return`<svg class="holemap" viewBox="0 0 360 150" role="img" aria-label="Top-down view of a golf hole: ${h.n}"><defs><pattern id="w${u}" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(${h.c?-28:0})"><rect width="7" height="14" style="fill:var(--m3)"/><rect x="7" width="7" height="14" style="fill:var(--m4)"/></pattern><radialGradient id="g${u}" cx=".45" cy=".4" r=".7"><stop offset="0" style="stop-color:var(--g1)"/><stop offset="1" style="stop-color:var(--g2)"/></radialGradient></defs>
+  return`<svg class="holemap" viewBox="0 0 360 150" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Top-down view of a golf hole: ${h.n}"><defs><pattern id="w${u}" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(${h.c?-28:0})"><rect width="7" height="14" style="fill:var(--m3)"/><rect x="7" width="7" height="14" style="fill:var(--m4)"/></pattern><radialGradient id="g${u}" cx=".45" cy=".4" r=".7"><stop offset="0" style="stop-color:var(--g1)"/><stop offset="1" style="stop-color:var(--g2)"/></radialGradient></defs>
   <rect width="360" height="150" style="fill:var(--m0)"/>${trees}
   ${(h.w||[]).map(w=>`<ellipse cx="${w[0]}" cy="${w[1]}" rx="${w[2]}" ry="${w[3]}" style="fill:var(--m5)"/><ellipse cx="${w[0]-w[2]*.3}" cy="${w[1]-w[3]*.3}" rx="${w[2]*.35}" ry="2" style="fill:var(--m6)"/>`).join("")}
   ${h.k?`<path d="M178 0c-14 30 14 50 0 80s14 50 0 80" style="stroke:var(--m5)" stroke-width="9" fill="none"/>`:""}
@@ -528,47 +534,45 @@ function season(){
   const bird=rs.filter(r=>!r.legacy).reduce((t,r)=>t+r.holes.filter(h=>h.done&&h.strokes<h.par).length,0);
   const f=v=>v==null?"–":v===0?"E":(v>0?"+":"")+(Number.isInteger(v)?v:v.toFixed(1));
   const cell=(v,l,c)=>`<div><b${c&&v!=="–"?' class="'+c+'"':""}>${v}</b><small>${l}</small></div>`;
-  const ghost=D.rounds.length?"":`<div class="ghost" aria-hidden="true"><div class="gcard"><div class="grow1"><span>Hole</span>${[1,2,3,4,5,6,7,8,9].map(n=>`<i>${n}</i>`).join("")}</div><div class="grow1"><span>Par</span>${Array(9).fill("<i></i>").join("")}</div><div class="grow1"><span>Score</span>${Array(9).fill("<i></i>").join("")}</div></div><p><b>Your first card goes here.</b><br>Tap Golf or P&amp;P above to start. A normal hole is one tap.</p></div>`;
-  return`<h3>${y} so far</h3><div class="season">${cell(rs.length,"Rounds")}${cell(f(best),"Best to par","mint")}${cell(f(avg),"Average")}${cell(bird,"Birdies",bird?"red":"")}</div>${D.rounds.length?"":`<p class="muted small seasonnote">Fills in as you play.</p>`}${ghost}`
+  const ghost=D.rounds.length?"":`<div class="ghost" aria-hidden="true"><div class="gcard"><div class="grow1"><span>Hole</span>${[1,2,3,4,5,6,7,8,9].map(n=>`<i>${n}</i>`).join("")}</div><div class="grow1"><span>Par</span>${Array(9).fill("<i></i>").join("")}</div><div class="grow1"><span>Score</span>${Array(9).fill("<i></i>").join("")}</div></div><p><b>Your first card goes here.</b> Pick Golf or P&amp;P to start.</p></div>`;
+  return`<div class="season"><em>${y} so far</em>${cell(rs.length,"Rounds")}${cell(f(best),"Best to par","mint")}${cell(f(avg),"Average")}${cell(bird,"Birdies",bird?"red":"")}</div>${ghost}`
 }
 function recent(){
-  const rs=[...D.rounds].sort((a,b)=>b.date.localeCompare(a.date)||String(b.id).localeCompare(String(a.id))).slice(0,3);if(!rs.length)return"";
-  return`<h3>Recent rounds</h3><div class="list">${rs.map(r=>{const s=r.legacy?{score:r.score,par:r.par,played:r.holeCount,n:r.holeCount}:stats(r);return`<button class="item ritem" ${r.legacy?"":`data-act="view" data-id="${esc(r.id)}"`}><span class="num">${s.score}</span><span class="grow"><b>${esc(r.courseName)}</b><br><small>${esc(fmtD(r.date))} · ${s.played===s.n?s.n+" holes":s.played+" of "+s.n}${pnames(r).length?" · with "+esc(pnames(r).join(", ")):""}</small></span><span class="tp">${vp(s.score-s.par)}</span></button>`}).join("")}</div>`;
+  const rs=[...D.rounds].sort((a,b)=>b.date.localeCompare(a.date)||String(b.id).localeCompare(String(a.id))).slice(0,1);if(!rs.length)return"";
+  return`<h3 class="rowh">Last round<button class="seeall" data-tab="history">See all</button></h3><div class="list">${rs.map(r=>{const s=r.legacy?{score:r.score,par:r.par,played:r.holeCount,n:r.holeCount}:stats(r);return`<button class="item ritem" ${r.legacy?"":`data-act="view" data-id="${esc(r.id)}"`}><span class="num">${s.score}</span><span class="grow"><b>${esc(r.courseName)}</b><br><small>${esc(fmtD(r.date))} · ${s.played===s.n?s.n+" holes":s.played+" of "+s.n}${pnames(r).length?" · with "+esc(pnames(r).join(", ")):""}</small></span><span class="tp">${vp(s.score-s.par)}</span></button>`}).join("")}</div>`;
 }
 function vStart(){
   const cs=[...D.courses].sort((a,b)=>(b.id===D.lastCourse)-(a.id===D.lastCourse)),hc=cs[0],rest=cs.slice(1);
   let hero="";
   if(hc){const st=cStats(hc),par=hc.holes.reduce((t,h)=>t+h.par,0),yd=hc.holes.reduce((t,h)=>t+(h.yds||0),0);
-    hero=`<div class="hero">
-      <svg class="flag" viewBox="0 0 40 56" aria-hidden="true"><path d="M8 4v48" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M9 5l24 8-24 9z" fill="var(--red)"/><ellipse cx="8" cy="52" rx="7" ry="2.5" fill="currentColor" opacity=".35"/></svg>
-      <small>${hc.id===D.lastCourse?"Last played":"Your course"}</small>
-      <div class="hname">${esc(hc.name)}</div>
-      <div class="hmeta">${hc.mode==="pp"?"Pitch & putt":"Golf"} · ${hc.holes.length} holes · par ${par}${yd?" · "+Number(ud(yd)).toLocaleString("en-IE")+" "+UL():""}</div>
-      <div class="hnums"><div><b data-count="${st.best??""}">${st.best??"–"}</b><small>Best</small></div><div><b>${st.last?st.last.s.score:"–"}</b><small>${st.last?"Last · "+esc(fmtD(st.last.r.date)):"Last"}</small></div><div><b data-count="${st.n}">${st.n}</b><small>Rounds</small></div></div>
-      <button class="hgo" data-act="start" data-kind="course" data-id="${esc(hc.id)}">Start round</button>
+    const s10h=hc.holes.length===18?`<button class="s10 hs10" data-act="s10" aria-pressed="${!!ui.s10}">Start on 10</button>`:"";
+    hero=`<div class="hero hc">
+      <div class="hctop"><div class="grow"><small>${hc.id===D.lastCourse?"Last played":"Your course"}</small><div class="hname">${esc(hc.name)}</div><div class="hmeta">${hc.mode==="pp"?"Pitch & putt":"Golf"} · ${hc.holes.length} holes · par ${par}${yd?" · "+Number(ud(yd)).toLocaleString("en-IE")+" "+UL():""}</div></div>
+      <button class="hgo" data-act="start" data-kind="course" data-id="${esc(hc.id)}">Start</button></div>
+      <div class="hline"><span>Best <b>${st.best??"–"}</b></span><span>Last <b>${st.last?st.last.s.score:"–"}</b></span><span><b>${st.n}</b> ${st.n===1?"round":"rounds"}</span>${s10h}</div>
     </div>`}
   const party=D.party||[];
   const tips=D.seen?"":`<div class="welcome"><b>Welcome to Pocket Scorecard</b><ul><li><b>One tap per hole.</b> Par and 2 putts are filled in; use −1 / +1 if not, then Next hole.</li><li><b>Tip me</b> when the round goes sideways: what it's seen, and one thing to try.</li><li><b>Add your course</b> from a photo of its scorecard, and set your clubs in Settings for club tips.</li></ul><button class="primary" data-act="seen">Got it</button></div>`;
   const s10=`<button class="s10" data-act="s10" aria-pressed="${!!ui.s10}">Start on 10</button>`;
   const partyRow=`<div class="party"><span class="muted">Playing with</span>${party.map((p,i)=>`<span class="pchip">${esc(p)}<button data-act="rmp" data-i="${i}" aria-label="Remove ${esc(p)}">×</button></span>`).join("")}${party.length<3?(ui.adding?`<input id="pName" maxlength="14" placeholder="Name" aria-label="Player name"><button data-act="addp">Add</button>`:`<button class="addp" data-act="showadd">+ Add player${isPro()?"":`<i class="lock">PRO</i>`}</button>`):""}</div>`;
   return`<section class="band"><div class="wrap home">
-  ${tips}<div class="mapcard" id="mapc"><div class="mapsvg" id="msvg">${holeSVG(mapI)}</div><div class="mapcap${capSide(mapI)}" id="mcap"><b id="mcapb">${esc(capMsgs()[capI%capMsgs().length])}</b><span id="mcaps">${HOLES[mapI%HOLES.length].n}</span></div></div>${hero}${hc&&hc.holes.length===18?`<div class="heroopt">${s10}</div>`:""}
+  ${tips}<div class="mapcard" id="mapc"><div class="mapsvg" id="msvg">${holeSVG(mapI)}</div><div class="mapcap${capSide(mapI)}" id="mcap"><b id="mcapb">${esc(capMsgs()[capI%capMsgs().length])}</b><span id="mcaps">${HOLES[mapI%HOLES.length].n}</span></div></div>${hero}
   ${partyRow}
   ${rest.length?`<h3>Other courses</h3><div class="crow">${rest.map(c=>`<button data-act="start" data-kind="course" data-id="${esc(c.id)}"><b>${esc(c.name)}</b><small>${c.holes.length} holes · par ${c.holes.reduce((t,h)=>t+h.par,0)}</small></button>`).join("")}</div>`:""}
   <h3>Start something</h3>
   <div class="tiles t3">
     <button class="tile" data-act="pick" data-v="golf" aria-pressed="${ui.pick==="golf"}"><b>Golf</b><span>Full course<small>Par 72</small></span></button>
     <button class="tile" data-act="pick" data-v="pp" aria-pressed="${ui.pick==="pp"}"><b>P&amp;P</b><span>Pitch & putt<small>Par 54</small></span></button>
-    <button class="tile" data-act="range"><b>Range${isPro()?"":`<i class="lock">PRO</i>`}</b><span>Practice<small>From your rounds</small></span></button>
+    <button class="tile" data-act="range"><b>Range${isPro()?"":`<i class="lock">PRO</i>`}</b><span>Practice<small>Your plan</small></span></button>
   </div>
   ${ui.pick?`<div class="pickrow"><input id="qName" placeholder="Where are you playing? (optional)" aria-label="Where are you playing (optional)">
     <button class="primary go18" data-act="start" data-kind="${ui.pick}-18">Start 18 holes</button>
     <button class="go9" data-act="start" data-kind="${ui.pick}-9">9 holes</button>${s10}</div>`:""}
   ${(()=>{const now=Date.now(),day=864e5;if(D.rounds.length<3||(D.lastBackup&&now-D.lastBackup<30*day)||(D.backupSnooze&&now<D.backupSnooze))return"";
-    return`<div class="nudge"><div><b>Back up your rounds</b><small>${D.lastBackup?"Last backup "+Math.floor((now-D.lastBackup)/day)+" days ago":"No backup yet"}. Your scores live only on this phone.</small></div><div class="acts" style="margin-top:8px"><button class="primary" data-act="dojsonnow">${native?"Share backup":"Back up now"}</button><button data-act="snooze">Later</button></div></div>`})()}
+    return`<div class="nudge"><div class="grow"><b>Back up your rounds</b><small>${D.lastBackup?"Last one "+Math.floor((now-D.lastBackup)/day)+" days ago":"Scores live only on this phone"}</small></div><button class="primary" data-act="dojsonnow">Back up</button><button class="nlater" data-act="snooze" aria-label="Remind me later">Later</button></div>`})()}
   ${season()}
-  ${recent()}
-  <button class="addc" data-act="newc">+ Add a course from its scorecard</button>
+  ${hc?"":recent()}
+  ${D.courses.length?"":`<button class="addc" data-act="newc">+ Add a course from its scorecard</button>`}
   </div></section>`;
 }
 function rangePlan(n){

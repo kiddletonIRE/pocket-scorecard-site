@@ -293,7 +293,7 @@ table.grid{border-collapse:collapse;width:100%;background:var(--grp);border-radi
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sw"><svg viewBox="0 0 150 120"><ellipse class="sp-green" cx="75" cy="96" rx="62" ry="18" style="fill:var(--m8)"/><g class="sp-pin"><ellipse cx="77" cy="96" rx="9" ry="3.6" style="fill:var(--m9)"/><path d="M77 96V22" style="stroke:var(--pin)" stroke-width="3.5" stroke-linecap="round"/><path class="sp-flag" d="M78.5 23l32 10.5-32 11z" fill="#e0283c"/></g><circle class="sp-ball" cx="77" cy="95" r="6.5" fill="#fff" stroke="#c9d3ce" stroke-width="1.2"/></svg><div class="t">Pocket Scorecard</div></div></div>
-<script>try{if(localStorage.getItem("gs_intro"))document.getElementById("splash").remove();else localStorage.setItem("gs_intro","1")}catch(e){}</script>
+<script>try{window.__seenIntro=!!localStorage.getItem("gs_intro");localStorage.setItem("gs_intro","1")}catch(e){}</script>
 <header class="top">
   <div class="bar">
     <div class="brand"><svg class="fl big" viewBox="0 0 12 16" aria-hidden="true"><path d="M2 1v14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M2.8 1.5l8 2.6-8 2.8z" fill="#c8102e"/></svg><div><button class="hback" id="hBack" data-act="back" hidden><span aria-hidden="true">‹</span> <i id="hBackL">Back</i></button><div class="cname" id="hName">Pocket Scorecard</div><div class="csub" id="hSub"></div></div></div>
@@ -932,7 +932,7 @@ document.addEventListener("touchend",e=>{if(sx==null||!D.active)return;const dx=
   if(Math.abs(dx)>70&&Math.abs(dy)<50){const r=D.active;r.cur=Math.max(0,Math.min(r.holes.length-1,r.cur+(dx<0?1:-1)));ui.tip=null;save();render()}},{passive:true});
 document.addEventListener("keydown",e=>{if(e.target.id==="pName"&&e.key==="Enter"){document.querySelector('[data-act="addp"]').click();return}if(view!=="play"||/INPUT|TEXTAREA/.test(e.target.tagName))return;const b=document.querySelector(`[data-act="${e.key==="ArrowLeft"?"prev":e.key==="ArrowRight"?"fwd":""}"]`);if(b)b.click()});
 window.addEventListener("scroll",()=>{const t=document.querySelector(".top");if(!t)return;const y=window.scrollY,c=t.classList.contains("compact");if(!c&&y>48)t.classList.add("compact");else if(c&&y<6)t.classList.remove("compact")},{passive:true});
-{const sp=$("splash");if(sp){const go=()=>{sp.classList.add("out");setTimeout(()=>sp.remove(),400)};sp.addEventListener("click",go);setTimeout(go,1750)}}
+{const sp=$("splash");if(sp){const go=()=>{sp.classList.add("out");setTimeout(()=>sp.remove(),400)};sp.addEventListener("click",go);setTimeout(go,window.__seenIntro?1200:1750)}}
 render();
 if(FS&&!hadLocal)FS.readFile({path:"pocket-scorecard.json",directory:"DATA",encoding:"utf8"}).then(r=>{const o=JSON.parse(r.data);if(o&&o.v===2){D=o;save();render()}}).catch(()=>{});
 if(!native&&location.protocol==="https:"&&"serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});

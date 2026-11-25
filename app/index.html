@@ -178,6 +178,10 @@ table.nine{min-width:0;table-layout:fixed}
 
 /* home */
 .home{max-width:560px}
+.season{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--grp);border-radius:16px;padding:14px 6px;text-align:center}.season b{display:block;font-size:24px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}.season b.mint{color:var(--mint)}.season b.red{color:var(--red)}.season small{font-size:12px;color:var(--mute)}.season>div+div{border-left:1px solid var(--sep)}
+.seasonnote{margin:6px 2px 0;font-size:13px}
+.ghost{margin-top:18px;border:1.5px dashed var(--sep);border-radius:16px;padding:14px;text-align:center}.ghost p{margin:12px 0 0;font-size:15px;color:var(--mute)}.ghost p b{color:var(--ink)}
+.gcard{opacity:.55}.grow1{display:grid;grid-template-columns:54px repeat(9,1fr);border-bottom:1px solid var(--sep)}.grow1:last-child{border-bottom:0}.grow1 span{font-size:11px;text-align:left;padding:5px 0;color:var(--mute)}.grow1 i{font-style:normal;font-size:12px;border-left:1px solid var(--sep);padding:5px 0;min-height:16px;color:var(--mute)}
 .welcome{background:var(--mintt);padding:14px 16px;margin-bottom:16px}.welcome ul{margin:8px 0 12px;padding-left:18px}.welcome li{margin-bottom:6px;font-size:15px}
 .hero{position:relative;background:linear-gradient(160deg,var(--mint),color-mix(in srgb,var(--mint) 70%,#0b3d2c));color:#fff;border-radius:20px;padding:18px 18px 16px;box-shadow:0 8px 24px -12px color-mix(in srgb,var(--mint) 70%,transparent)}
 .hero .flag{position:absolute;right:18px;top:16px;width:28px;height:40px;color:#fff;opacity:.9}
@@ -517,6 +521,16 @@ setInterval(()=>{
     setTimeout(()=>{w.innerHTML=holeSVG(mapI);if(sp)sp.textContent=HOLES[mapI%HOLES.length].n;const mc=$("mcap");if(mc)mc.className="mapcap"+capSide(mapI);w.classList.remove("fade")},350)}
 },4000);
 function greet(){const h=new Date().getHours();return h<12?"Good morning":h<18?"Good afternoon":"Good evening"}
+function season(){
+  const y=String(new Date().getFullYear()),rs=D.rounds.filter(r=>String(r.date).slice(0,4)===y);
+  const full=rs.map(r=>r.legacy?{d:r.score-r.par}:(()=>{const s=stats(r);return s.played===s.n&&s.n?{d:s.score-s.par}:null})()).filter(Boolean);
+  const best=full.length?Math.min(...full.map(x=>x.d)):null,avg=full.length?full.reduce((t,x)=>t+x.d,0)/full.length:null;
+  const bird=rs.filter(r=>!r.legacy).reduce((t,r)=>t+r.holes.filter(h=>h.done&&h.strokes<h.par).length,0);
+  const f=v=>v==null?"–":v===0?"E":(v>0?"+":"")+(Number.isInteger(v)?v:v.toFixed(1));
+  const cell=(v,l,c)=>`<div><b${c&&v!=="–"?' class="'+c+'"':""}>${v}</b><small>${l}</small></div>`;
+  const ghost=D.rounds.length?"":`<div class="ghost" aria-hidden="true"><div class="gcard"><div class="grow1"><span>Hole</span>${[1,2,3,4,5,6,7,8,9].map(n=>`<i>${n}</i>`).join("")}</div><div class="grow1"><span>Par</span>${Array(9).fill("<i></i>").join("")}</div><div class="grow1"><span>Score</span>${Array(9).fill("<i></i>").join("")}</div></div><p><b>Your first card goes here.</b><br>Tap Golf or P&amp;P above to start. A normal hole is one tap.</p></div>`;
+  return`<h3>${y} so far</h3><div class="season">${cell(rs.length,"Rounds")}${cell(f(best),"Best to par","mint")}${cell(f(avg),"Average")}${cell(bird,"Birdies",bird?"red":"")}</div>${D.rounds.length?"":`<p class="muted small seasonnote">Fills in as you play.</p>`}${ghost}`
+}
 function recent(){
   const rs=[...D.rounds].sort((a,b)=>b.date.localeCompare(a.date)||String(b.id).localeCompare(String(a.id))).slice(0,3);if(!rs.length)return"";
   return`<h3>Recent rounds</h3><div class="list">${rs.map(r=>{const s=r.legacy?{score:r.score,par:r.par,played:r.holeCount,n:r.holeCount}:stats(r);return`<button class="item ritem" ${r.legacy?"":`data-act="view" data-id="${esc(r.id)}"`}><span class="num">${s.score}</span><span class="grow"><b>${esc(r.courseName)}</b><br><small>${esc(fmtD(r.date))} · ${s.played===s.n?s.n+" holes":s.played+" of "+s.n}${pnames(r).length?" · with "+esc(pnames(r).join(", ")):""}</small></span><span class="tp">${vp(s.score-s.par)}</span></button>`}).join("")}</div>`;
@@ -552,6 +566,7 @@ function vStart(){
     <button class="go9" data-act="start" data-kind="${ui.pick}-9">9 holes</button>${s10}</div>`:""}
   ${(()=>{const now=Date.now(),day=864e5;if(D.rounds.length<3||(D.lastBackup&&now-D.lastBackup<30*day)||(D.backupSnooze&&now<D.backupSnooze))return"";
     return`<div class="nudge"><div><b>Back up your rounds</b><small>${D.lastBackup?"Last backup "+Math.floor((now-D.lastBackup)/day)+" days ago":"No backup yet"}. Your scores live only on this phone.</small></div><div class="acts" style="margin-top:8px"><button class="primary" data-act="dojsonnow">${native?"Share backup":"Back up now"}</button><button data-act="snooze">Later</button></div></div>`})()}
+  ${season()}
   ${recent()}
   <button class="addc" data-act="newc">+ Add a course from its scorecard</button>
   </div></section>`;
